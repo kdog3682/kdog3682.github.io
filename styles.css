@@ -1,0 +1,77 @@
+textarea {
+  width: 400px;
+  height: 400px;
+}
+
+@import url("https://fonts.googleapis.com/css?family=Rokkitt&display=swap");
+
+:root {
+  --borderColor: dodgerblue;
+}
+
+/* Static Assets */
+/**************************************************************/
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Static Assets */
+/**************************************************************/
+
+.border {
+  border: 4px solid var(--borderColor);
+}
+
+.flex {
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+hr {
+  width: 75vw;
+}
+
+input {
+  outline: 1px solid green;
+}
+
+/* Static Assets */
+/**************************************************************/
+
+.display {
+  width: 150px;
+  display: inline-block;
+  padding: 10px;
+}
+
+.font {
+  font-family: "Rokkitt", serif;
+  font-size: 16px;
+  color: black;
+}
+
+button {
+  background: none;
+  padding: 4px;
+  color: black;
+  border: 1px solid black;
+  border-radius: 4px;
+  font-family: "Sans Serif";
+  font-size: 11pt;
+}
+
+button:hover {
+  background: black;
+  color: white;
+}
