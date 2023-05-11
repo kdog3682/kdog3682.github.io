@@ -1,99 +1,90 @@
-<script src="vue.js"></script>
+<!-- 03-22-2023 -->
 
-<div id="app">
-  <my-table :value="value">
-    <template v-slot:default="item">
-        <p>{{item.index}} from defausdasdlt</p>
-    </template>
-
-    <template v-slot:rowlabel="item">
-        <p>{{item.index}}row label</p>
-    </template>
-  </my-table>
-</div>
-
-<template id="my-table">
-  <div>
-    <div v-if="mode == 'flat'" class="v-flat-table">
-        <template v-for="item,i in value">
-            <slot :item="item" :index="i">
-                <p>{{item.index}}</p>
-            </slot>
-        </template>
-   </div>
-
-   <div v-else-if="mode == 'double'">
-    <template class="v-table-double" v-for="row, i in value">
-
-        <slot name="rowlabel" :index="i"></slot>
-
-        <div class="v-table-inner-row" v-for="item, j in row">
-            <slot :item="item" :index="[i, j]">
-                <p>{{item.index}}</p>
-            </slot>
-        </div>
-    </template>
-   </div>
-</template>
-<script>
-
-Vue.component('my-table', {
-  props: ['value'],
-  template: '#my-table',
-  data() {
-     return {
-     }
-  },
-  computed: {
-      mode() {
-          return 'flat'
-      },
-  },
-  iirender(h) {
-      return h('div', this.value.map((item, index) => {
-         return h('template', {
-            scopedSlots: {
-                 default(p) {
-                    return h('h3', "HI")
-                }
-            }
-         }, this.$scopedSlots.default({
-            item, index
-         }) )
-      }))
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
-})
 
-new Vue({
-  el: '#app',
-  data: {
-    value: [1,2,3,4,5],
-  },
-  mounted() {
-      console.log('hello from ')
-  console.log('hi')
-  setTimeout(() => console.log(document.body.children[0].innerHTML) , 250)
-  },
-})
-</script>
+  svg {
+    margin: 0;
+    padding: 0;
+  }
 
-<!--
-<!doctype html><html>
-    <head>
-<script src="https://unpkg.com/vue@3"></script>
-        <link rel="stylesheet" href="normalize.css"/>
-        <link rel="stylesheet" href="r6.css"/>
-        <script charset="utf8" src="utils.js"></script>
-        <script charset="utf8" src="browser.js"></script>
+  body,
+  html {
+    height: 100%;
+    width: 100%;
+    position: relative;
+  }
 
-    </head>
-    <body><div id="app"></div></body>
-<script src="r6.js"></script>
-<script>
-  var { createApp } = Vue
-  var app = createApp(App ).mount('#app')
+  hr {
+    outline: none;
+  }
 
-</script>
+  td:empty:after {
+    content: ".";
+    color: transparent;
+    visibility: hidden;
+  }
 
-</html>
--->
+  table {
+    empty-cells: show;
+    border-collapse: collapse;
+  }
+
+  .centered-container > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .page {
+    width: 100vw;
+    height: 100vh;
+    padding: 0.25in;
+  }
+</style>
+
+<body>
+  <div class="hammy-website">
+    <div class="page" style="background: rgb(255, 249, 196)">
+      <div class="centered-container" style="height: 100%">
+        <h1
+          class="hero"
+          style="
+            font-size: 40pt;
+            font-weight: bold;
+            font-family: 'Playfair Display';
+          "
+        >
+          Hammy Math Class
+        </h1>
+        <div style="padding-top: 0.2in"></div>
+        <h2>Welcome to Hammy Math Class everyone.</h2>
+        <div style="padding-top: 0.2in"></div>
+        <h3 style="padding: 5pt; text-align: center; color: rgb(33, 150, 243)">
+          Let's grow stronger and stronger and stronger!
+        </h3>
+        <div style="padding-top: 0.2in"></div>
+        <div class="v-warning">
+          <p
+            style="
+              padding: 10pt;
+              border-radius: 10pt;
+              background: rgb(255, 205, 210);
+              font-weight: bold;
+              width: 400px;
+              text-align: center;
+            "
+          >
+            Hammy Math Class is not ready yet. Hammy will be ready on April 1st,
+            2023.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
