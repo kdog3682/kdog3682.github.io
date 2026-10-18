@@ -1,0 +1,22 @@
+---
+// unlisted posts: reachable at /<slug>, never linked, noindex
+import { render } from "astro:content"
+import Base from "../layouts/Base.astro"
+import { PostView } from "../components/PostView"
+import { getUnlistedPosts, toSummary, type Post } from "../lib/posts"
+
+export async function getStaticPaths() {
+  const posts = await getUnlistedPosts()
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }))
+}
+
+const { post } = Astro.props as { post: Post }
+const { Content } = await render(post)
+const summary = toSummary(post)
+---
+
+<Base title={summary.title} description={summary.description} noindex>
+  <PostView post={summary}>
+    <Content />
+  </PostView>
+</Base>

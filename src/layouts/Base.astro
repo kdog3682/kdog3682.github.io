@@ -1,0 +1,27 @@
+---
+import "../styles/global.css"
+
+type Props = {
+  title: string
+  description?: string
+  noindex?: boolean
+}
+
+const { title, description, noindex = false } = Astro.props
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+  </head>
+  <body class="bg-background text-foreground antialiased">
+    <main class="mx-auto max-w-2xl px-4 py-12 sm:py-16">
+      <slot />
+    </main>
+  </body>
+</html>

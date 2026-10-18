@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* tailwind skips node_modules by default; scan the shadcn package so its classes are generated.
+   adjust this path if @paladin/shadcn resolves elsewhere in your setup. */
+@source "../../node_modules/@paladin/shadcn";

@@ -1,0 +1,12 @@
+---
+// built from Google Drive at build time; the deploy workflow rebuilds daily
+import Base from "../layouts/Base.astro"
+import { WorksheetsPage } from "../components/WorksheetsPage"
+import { getWorksheetSections } from "../lib/drive"
+
+const sections = await getWorksheetSections()
+---
+
+<Base title="Worksheets — Kevin Lee" description="Math worksheets for grades 4, 5, and 6.">
+  <WorksheetsPage sections={sections} />
+</Base>

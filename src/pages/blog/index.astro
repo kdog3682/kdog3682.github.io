@@ -1,0 +1,11 @@
+---
+import Base from "../../layouts/Base.astro"
+import { BlogIndex } from "../../components/BlogIndex"
+import { getPublicPosts, toSummary } from "../../lib/posts"
+
+const posts = (await getPublicPosts()).map(toSummary)
+---
+
+<Base title="lu — Kevin Lee">
+  <BlogIndex posts={posts} />
+</Base>
