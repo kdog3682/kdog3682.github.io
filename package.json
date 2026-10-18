@@ -1,11 +1,5 @@
 {
   "name": "kdog3682.github.io",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build"
-  },
   "dependencies": {
     "@astrojs/react": "^7.1.0",
     "@astrojs/sitemap": "^3.7.4",
@@ -13,11 +7,13 @@
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^7.4.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.28.0"
+    "react-dom": "^18.3.1"
   },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
-    "vite": "^5.4.11"
-  }
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "type": "module"
 }
