@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@paladin/shadcn"
 import type { GradeSection } from "../lib/drive"
 
 type Props = {
@@ -9,11 +8,9 @@ export function WorksheetSection({ section }: Props) {
   const { folder, label, worksheets } = section
 
   return (
-    <Card id={folder.toLowerCase()}>
-      <CardHeader>
-        <CardTitle>{label}</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <section id={folder.toLowerCase()} className="rounded-xl border border-border p-6">
+      <h2 className="text-lg font-semibold">{label}</h2>
+      <div className="mt-4">
         {worksheets.length === 0 ? (
           <p className="text-sm text-muted-foreground">No worksheets yet.</p>
         ) : (
@@ -35,7 +32,7 @@ export function WorksheetSection({ section }: Props) {
             ))}
           </ul>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   )
 }

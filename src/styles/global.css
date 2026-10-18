@@ -1,6 +1,19 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* tailwind skips node_modules by default; scan the shadcn package so its classes are generated.
-   adjust this path if @paladin/shadcn resolves elsewhere in your setup. */
-@source "../../node_modules/@paladin/shadcn";
+/* the few color tokens the components use, so no component library is needed */
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-muted-foreground: #737373;
+  --color-border: #e5e5e5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #0a0a0a;
+    --color-foreground: #fafafa;
+    --color-muted-foreground: #a3a3a3;
+    --color-border: #262626;
+  }
+}
