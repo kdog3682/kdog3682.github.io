@@ -20,6 +20,7 @@
 // the page only reads that, so dev needs a restart to see Drive changes.
 
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs"
+import { createHash } from "node:crypto"
 import { join } from "node:path"
 
 export const GRADES = [
@@ -157,7 +158,7 @@ async function listViaGapi(rootId: string): Promise<Listing> {
 // --- downloading
 
 /** downloads what's new or changed, drops what's gone from Drive, and returns the site links */
-async function publish(grade: string, remotes: Remote[]): Promise<Worksheet[]> {
+async function publish(grade: string, remotes: Remote[], seen: Map<string, string | undefined>): Promise<Worksheet[]> {
   const dir = join(PUBLIC_DIR, grade)
   mkdirSync(dir, { recursive: true })
 
@@ -169,7 +170,14 @@ async function publish(grade: string, remotes: Remote[]): Promise<Worksheet[]> {
     const dest = join(dir, file)
     kept.add(file)
 
-    const current = existsSync(dest) && remote.size !== undefined && statSync(dest).size === remote.size
+    // unchanged when the file is here and Drive says it hasn't been modified since the last sync
+    // (the manifest remembers that), or, with no history, when the byte size matches
+    const onDisk = existsSync(dest)
+    const current =
+      onDisk &&
+      (seen.has(remote.id) && remote.modifiedTime
+        ? seen.get(remote.id) === remote.modifiedTime
+        : remote.size !== undefined && statSync(dest).size === remote.size)
     if (!current) {
       rmSync(dest, { force: true })
       await remote.save(dest)
@@ -191,31 +199,64 @@ async function publish(grade: string, remotes: Remote[]): Promise<Worksheet[]> {
 }
 
 const MANIFEST = join(process.cwd(), ".worksheets", "manifest.json")
+const FINGERPRINT = join(PUBLIC_DIR, "fingerprint.txt")
 
 const emptySections = (): GradeSection[] => GRADES.map((g) => ({ ...g, worksheets: [] }))
+
+/** null when Drive can't be reached or isn't configured */
+async function listDrive(): Promise<Listing | null> {
+  const rootId = process.env.DRIVE_WORKSHEETS_FOLDER_ID
+  if (!rootId) {
+    console.warn("[worksheets] DRIVE_WORKSHEETS_FOLDER_ID missing, rendering empty sections")
+    return null
+  }
+  try {
+    const apiKey = process.env.DRIVE_API_KEY
+    return apiKey ? await listViaApiKey(apiKey, rootId) : await listViaGapi(rootId)
+  } catch (err) {
+    console.warn(`[worksheets] could not list Drive, rendering empty sections: ${err instanceof Error ? err.message : err}`)
+    return null
+  }
+}
+
+/** a hash of everything the site shows about the worksheets: it changes exactly when a deploy would */
+function fingerprint(listing: Listing): string {
+  const rows = GRADES.flatMap(({ folder }) =>
+    (listing[folder] ?? []).map((r) => [folder, r.id, r.name, r.size, r.modifiedTime, r.description, r.pages]),
+  ).sort((a, b) => String(a[1]).localeCompare(String(b[1])))
+  return createHash("sha256").update(JSON.stringify(rows)).digest("hex").slice(0, 16)
+}
+
+/** the fingerprint of what Drive holds right now, or "unavailable". the workflow compares it to the live site's */
+export async function worksheetFingerprint(): Promise<string> {
+  const listing = await listDrive()
+  return listing ? fingerprint(listing) : "unavailable"
+}
+
+/** modifiedTime per file id as of the last sync, so an unchanged file isn't downloaded again */
+function lastSeen(): Map<string, string | undefined> {
+  const seen = new Map<string, string | undefined>()
+  for (const section of getWorksheetSections()) for (const w of section.worksheets) seen.set(w.id, w.modifiedTime)
+  return seen
+}
 
 /**
  * Lists Drive, downloads the PDFs into public/worksheets/ and writes the manifest the page reads.
  * Runs from an astro integration at startup, before astro snapshots public/ for the build.
  */
 export async function syncWorksheets(): Promise<void> {
-  const rootId = process.env.DRIVE_WORKSHEETS_FOLDER_ID
-  let sections = emptySections()
-
-  if (!rootId) {
-    console.warn("[worksheets] DRIVE_WORKSHEETS_FOLDER_ID missing, rendering empty sections")
-  } else {
-    try {
-      const apiKey = process.env.DRIVE_API_KEY
-      const listing = apiKey ? await listViaApiKey(apiKey, rootId) : await listViaGapi(rootId)
-      sections = await Promise.all(GRADES.map(async (g) => ({ ...g, worksheets: await publish(g.folder, listing[g.folder] ?? []) })))
-    } catch (err) {
-      console.warn(`[worksheets] could not list Drive, rendering empty sections: ${err instanceof Error ? err.message : err}`)
-    }
-  }
+  const listing = await listDrive()
+  const seen = lastSeen()
+  const sections = listing
+    ? await Promise.all(GRADES.map(async (g) => ({ ...g, worksheets: await publish(g.folder, listing[g.folder] ?? [], seen) })))
+    : emptySections()
 
   mkdirSync(join(MANIFEST, ".."), { recursive: true })
   writeFileSync(MANIFEST, JSON.stringify(sections, null, 2))
+  if (listing) {
+    mkdirSync(PUBLIC_DIR, { recursive: true })
+    writeFileSync(FINGERPRINT, fingerprint(listing))
+  }
 }
 
 /** what the last sync found; empty sections when it hasn't run */

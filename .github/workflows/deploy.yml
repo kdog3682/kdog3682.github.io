@@ -18,13 +18,49 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # the daily run only rebuilds when Drive differs from what the live site was built from.
+  # pushes and manual runs always deploy.
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.compare.outputs.changed }}
+      fingerprint: ${{ steps.compare.outputs.fingerprint }}
+    env:
+      DRIVE_API_KEY: ${{ secrets.DRIVE_API_KEY }}
+      DRIVE_WORKSHEETS_FOLDER_ID: ${{ secrets.DRIVE_WORKSHEETS_FOLDER_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - id: compare
+        run: |
+          current=$(bun scripts/fingerprint.ts)
+          live=$(curl -fsS https://kdog3682.github.io/worksheets/fingerprint.txt || echo none)
+          echo "drive: $current, live site: $live"
+          echo "fingerprint=$current" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$current" != "$live" ] || [ "$current" = "unavailable" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Drive is unchanged, skipping the deploy"
+          fi
+
   build:
+    needs: check
+    if: needs.check.outputs.changed == 'true'
     runs-on: ubuntu-latest
     env:
       DRIVE_API_KEY: ${{ secrets.DRIVE_API_KEY }}
       DRIVE_WORKSHEETS_FOLDER_ID: ${{ secrets.DRIVE_WORKSHEETS_FOLDER_ID }}
     steps:
       - uses: actions/checkout@v4
+      # downloaded PDFs and the manifest of when they were fetched: unchanged files aren't fetched again
+      - uses: actions/cache@v4
+        with:
+          path: |
+            public/worksheets
+            .worksheets
+          key: worksheets-${{ needs.check.outputs.fingerprint }}
+          restore-keys: worksheets-
       - uses: withastro/action@v3
         with:
           package-manager: bun@latest
