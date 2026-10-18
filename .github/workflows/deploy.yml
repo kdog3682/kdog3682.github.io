@@ -21,6 +21,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      DRIVE_API_KEY: ${{ secrets.DRIVE_API_KEY }}
       DRIVE_WORKSHEETS_FOLDER_ID: ${{ secrets.DRIVE_WORKSHEETS_FOLDER_ID }}
     steps:
       - uses: actions/checkout@v4
