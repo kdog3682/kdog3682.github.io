@@ -4,7 +4,7 @@ const ABOUT = [
   "I was born in Changsha, China.",
   "I grew up in Lynnwood, Washington.",
   "I attended the University of Washington and studied biochemistry.",
-  "I work as a math tutor.",
+  "I live in Brooklyn, New York.",
 ]
 
 export function Home() {

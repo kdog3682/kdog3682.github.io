@@ -1,10 +1,11 @@
 import { defineConfig } from "astro/config"
 import react from "@astrojs/react"
+import mdx from "@astrojs/mdx"
 import sitemap from "@astrojs/sitemap"
 import tailwindcss from "@tailwindcss/vite"
 import { syncWorksheets } from "./src/lib/drive"
 
-const LISTED_PREFIXES = ["/blog", "/worksheets"]
+const LISTED_PREFIXES = ["/posts", "/worksheets"]
 
 export default defineConfig({
   site: "https://kdog3682.github.io",
@@ -15,6 +16,7 @@ export default defineConfig({
       hooks: { "astro:config:setup": syncWorksheets },
     },
     react(),
+    mdx(),
     sitemap({
       // unlisted posts live at the root, so only allow known listed sections
       filter: (page) => {
@@ -25,5 +27,6 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: { include: ["pinyin-pro"] },
   },
 })

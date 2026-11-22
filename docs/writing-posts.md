@@ -1,6 +1,6 @@
 # Writing blog posts
 
-Posts are Markdown files in `src/content/posts/<slug>.md`. The filename is the slug and the URL (`/blog/<slug>` for public posts; unlisted posts are served at `/<slug>`).
+Posts are Markdown (`.md`) or MDX (`.mdx`, when a post needs components) files in `src/content/posts/<slug>`. The filename is the slug and the URL (`/posts/<slug>` for public posts; unlisted posts are served at `/<slug>`).
 
 ## Frontmatter
 
@@ -16,7 +16,7 @@ visibility: public        # public | unlisted | private (default public)
 ```
 
 - `public`: listed on the blog index.
-- `unlisted`: reachable by URL only. Slug must not collide with reserved routes (`blog`, `worksheets`, `404`, `index`, ...; see `src/lib/posts.ts`).
+- `unlisted`: reachable by URL only. Slug must not collide with reserved routes (`posts`, `worksheets`, `404`, `index`, ...; see `src/lib/posts.ts`).
 - `private`: not served.
 
 Default to `public` unless told otherwise.
@@ -31,3 +31,20 @@ Default to `public` unless told otherwise.
 ## Checking
 
 `bun run build` must pass. Don't typecheck.
+
+## Title and slug
+
+The title should match the slug: `Poems of My Grandfather` → `poems-of-my-grandfather`.
+
+## Poems
+
+Use an `.mdx` post and the `Poem` component (`src/components/poem/Poem.tsx`):
+
+```mdx
+import { Poem } from "../../components/poem/Poem"
+
+<Poem client:load title="..." author="..." zh={`line\nline\n\nline\nline`} en={`...same shape...`} />
+```
+
+- `zh` / `en`: stanzas separated by a blank line, one verse line per line; `en` must match `zh` line for line.
+- `pinyin` and `english` are reader toggles (default off). The post needs `client:load` on `<Poem>` for them to work.

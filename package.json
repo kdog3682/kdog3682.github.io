@@ -1,11 +1,13 @@
 {
   "name": "kdog3682.github.io",
   "dependencies": {
+    "@astrojs/mdx": "^8.1.6",
     "@astrojs/react": "^7.1.0",
     "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^7.4.0",
+    "pinyin-pro": "^3.29.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

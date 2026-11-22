@@ -24,7 +24,7 @@ export function PostView({ post, backHref, children }: Props) {
             {formatDate(post.date)}
           </time>
         </header>
-        <div className="prose prose-neutral dark:prose-invert max-w-none">{children}</div>
+        <div className="prose prose-neutral dark:prose-invert max-w-none prose-p:text-pretty">{children}</div>
       </article>
     </>
   )

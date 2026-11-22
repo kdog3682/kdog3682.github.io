@@ -12,7 +12,7 @@ export type PostSummary = {
 }
 
 // root-level routes that unlisted slugs must not shadow
-const RESERVED_SLUGS = new Set(["blog", "worksheets", "404", "index", "sitemap-index", "sitemap-0"])
+const RESERVED_SLUGS = new Set(["posts", "blog", "worksheets", "404", "index", "sitemap-index", "sitemap-0"])
 
 export async function getPostsByVisibility(visibility: Visibility) {
   const posts = await getCollection("posts", (p) => p.data.visibility === visibility)

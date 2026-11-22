@@ -8,7 +8,7 @@ type Props = {
 export function BlogIndex({ posts }: Props) {
   return (
     <>
-      <h1 className="text-3xl font-semibold tracking-tight">lu <span className="text-muted-foreground">路</span></h1>
+      <h1 className="text-3xl font-semibold tracking-tight">Posts</h1>
 
       {posts.length === 0 ? (
         <p className="mt-8 text-muted-foreground">No posts yet.</p>
@@ -22,7 +22,7 @@ export function BlogIndex({ posts }: Props) {
               >
                 {formatDate(post.date)}
               </time>
-              <a href={`/blog/${post.slug}`} className="font-medium hover:underline underline-offset-4">
+              <a href={`/posts/${post.slug}`} className="font-medium hover:underline underline-offset-4">
                 {post.title}
               </a>
             </li>
