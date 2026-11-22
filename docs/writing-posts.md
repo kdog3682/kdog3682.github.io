@@ -11,11 +11,12 @@ Defined in `src/content.config.ts`:
 title: Required
 date: 2026-11-22          # YYYY-MM-DD
 description: Optional one-liner (index/SEO)
-visibility: public        # public | unlisted | private (default public)
+visibility: public        # public | preview | unlisted | private (default public)
 ---
 ```
 
 - `public`: listed on the blog index.
+- `preview`: not on `/posts`; listed on `/preview` and served at `/preview/<slug>` (noindex).
 - `unlisted`: reachable by URL only. Slug must not collide with reserved routes (`posts`, `worksheets`, `404`, `index`, ...; see `src/lib/posts.ts`).
 - `private`: not served.
 

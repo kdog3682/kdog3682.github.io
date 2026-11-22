@@ -1,0 +1,11 @@
+---
+import Base from "../../layouts/Base.astro"
+import { BlogIndex } from "../../components/BlogIndex"
+import { getPreviewPosts, toSummary } from "../../lib/posts"
+
+const posts = (await getPreviewPosts()).map(toSummary)
+---
+
+<Base title="Preview — Kevin Lee" noindex>
+  <BlogIndex posts={posts} title="Preview" basePath="/preview" />
+</Base>

@@ -3,12 +3,14 @@ import type { PostSummary } from "../lib/posts"
 
 type Props = {
   posts: PostSummary[]
+  title?: string
+  basePath?: string
 }
 
-export function BlogIndex({ posts }: Props) {
+export function BlogIndex({ posts, title = "Posts", basePath = "/posts" }: Props) {
   return (
     <>
-      <h1 className="text-3xl font-semibold tracking-tight">Posts</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
 
       {posts.length === 0 ? (
         <p className="mt-8 text-muted-foreground">No posts yet.</p>
@@ -22,7 +24,7 @@ export function BlogIndex({ posts }: Props) {
               >
                 {formatDate(post.date)}
               </time>
-              <a href={`/posts/${post.slug}`} className="font-medium hover:underline underline-offset-4">
+              <a href={`${basePath}/${post.slug}`} className="font-medium hover:underline underline-offset-4">
                 {post.title}
               </a>
             </li>
