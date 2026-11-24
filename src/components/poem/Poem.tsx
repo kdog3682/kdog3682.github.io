@@ -8,6 +8,8 @@ type Props = {
   titleEn?: string
   authorEn?: string
   showHeaderEn?: boolean
+  /** when it was written, "YYYY-MM-DD"; shown under the author as 2023年11月17日 */
+  date?: string
   /** stanzas separated by a blank line, one line of verse per line */
   zh: string
   /** same shape as `zh`: same number of stanzas and lines */
@@ -20,7 +22,15 @@ const stanzas = (s: string) =>
     .split(/\n\s*\n/)
     .map((st) => st.trim().split("\n").map((l) => l.trim()).filter(Boolean))
 
-export function Poem({ title, author, titleEn, authorEn, showHeaderEn = false, zh, en }: Props) {
+const zhDate = (d: string) => {
+  const [y, m, day] = d.split("-").map(Number)
+  return `${y}年${m}月${day}日`
+}
+
+const enDate = (d: string) =>
+  new Date(`${d}T00:00:00`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+
+export function Poem({ title, author, titleEn, authorEn, showHeaderEn = false, date, zh, en }: Props) {
   const [pinyin, setPinyin] = useState(false)
   const [english, setEnglish] = useState(false)
   const zhStanzas = stanzas(zh)
@@ -46,6 +56,11 @@ export function Poem({ title, author, titleEn, authorEn, showHeaderEn = false, z
           </p>
         )}
         {showHeaderEn && authorEn && <p className="text-xs text-muted-foreground">{authorEn}</p>}
+        {date && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            <time dateTime={date}>{showHeaderEn ? enDate(date) : zhDate(date)}</time>
+          </p>
+        )}
       </header>
 
       <div className={showEn ? "grid grid-cols-1 sm:grid-cols-2" : "text-center"}>
