@@ -14,7 +14,8 @@ const CLAUSE = /[^，。！？；：、,.!?;:]+[，。！？；：、,.!?;:]*/g
 // one line of Chinese. a line only wraps between clauses (after a comma etc.), never mid-clause,
 // so a narrow screen breaks a verse line into halves instead of orphaning its last character or two.
 // each clause is an atomic inline-block, so it moves to the next line whole; only a clause wider than
-// the container by itself (e.g. with pinyin on a phone) wraps inside, instead of overflowing.
+// the container by itself (e.g. with pinyin on a phone) wraps inside, instead of overflowing, and
+// text-balance splits it evenly (4+3) rather than orphaning a character.
 // wrapped halves follow the parent's text-align. with `pinyin`, each character gets its reading
 // above it (ruby); pinyin is computed at build time.
 export function Chinese({ text, pinyin: withPinyin = false }: Props) {
@@ -29,7 +30,7 @@ export function Chinese({ text, pinyin: withPinyin = false }: Props) {
         const chars = [...c]
         at += chars.length
         return (
-          <span key={k} className="inline-block max-w-full">
+          <span key={k} className="inline-block max-w-full text-balance">
             {withPinyin
               ? chars.map((ch, i) =>
                   HAN.test(ch) ? (
