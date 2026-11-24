@@ -35,7 +35,7 @@ Default to `public` unless told otherwise.
 
 ## Title and slug
 
-The title should match the slug: `Poems of My Grandfather` → `poems-of-my-grandfather`.
+The title should match the slug: `My Grandfather's Poem` → `my-grandfathers-poem`.
 
 ## Poems
 
@@ -48,4 +48,5 @@ import { Poem } from "../../components/poem/Poem"
 ```
 
 - `zh` / `en`: stanzas separated by a blank line, one verse line per line; `en` must match `zh` line for line.
+- `titleEn` / `authorEn` (optional): English title and author, shown under the Chinese only with `showHeaderEn` (default false; not a reader toggle).
 - `pinyin` and `english` are reader toggles (default off). The post needs `client:load` on `<Poem>` for them to work.

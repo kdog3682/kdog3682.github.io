@@ -17,16 +17,16 @@ export function BlogIndex({ posts, title = "Posts", basePath = "/posts" }: Props
       ) : (
         <ol className="mt-8 space-y-4">
           {posts.map((post) => (
-            <li key={post.slug} className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4">
-              <time
-                dateTime={post.date.toISOString()}
-                className="shrink-0 text-sm tabular-nums text-muted-foreground sm:w-40"
-              >
-                {formatDate(post.date)}
-              </time>
+            <li key={post.slug} className="flex flex-wrap items-baseline gap-x-3">
               <a href={`${basePath}/${post.slug}`} className="font-medium hover:underline underline-offset-4">
                 {post.title}
               </a>
+              <time
+                dateTime={post.date.toISOString()}
+                className="shrink-0 text-sm tabular-nums text-muted-foreground"
+              >
+                {formatDate(post.date)}
+              </time>
             </li>
           ))}
         </ol>

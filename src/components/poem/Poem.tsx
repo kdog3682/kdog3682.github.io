@@ -4,6 +4,10 @@ import { Chinese } from "./Chinese"
 type Props = {
   title: string
   author?: string
+  /** english title / author, shown under the chinese only when `showHeaderEn` is set */
+  titleEn?: string
+  authorEn?: string
+  showHeaderEn?: boolean
   /** stanzas separated by a blank line, one line of verse per line */
   zh: string
   /** same shape as `zh`: same number of stanzas and lines */
@@ -16,7 +20,7 @@ const stanzas = (s: string) =>
     .split(/\n\s*\n/)
     .map((st) => st.trim().split("\n").map((l) => l.trim()).filter(Boolean))
 
-export function Poem({ title, author, zh, en }: Props) {
+export function Poem({ title, author, titleEn, authorEn, showHeaderEn = false, zh, en }: Props) {
   const [pinyin, setPinyin] = useState(false)
   const [english, setEnglish] = useState(false)
   const zhStanzas = stanzas(zh)
@@ -25,14 +29,23 @@ export function Poem({ title, author, zh, en }: Props) {
 
   return (
     <section className="not-prose relative my-8 rounded-2xl border border-border p-6">
-      <div className="absolute right-3 top-3 flex gap-1">
+      {/* in flow on mobile (its own row above the title); pinned to the corner from sm up */}
+      <div className="-mr-3 -mt-3 mb-2 flex justify-end gap-1 sm:absolute sm:right-3 sm:top-3 sm:m-0">
         <Toggle label="pinyin" icon="拼" on={pinyin} set={setPinyin} />
         {enStanzas && <Toggle label="english" icon="A" on={english} set={setEnglish} />}
       </div>
 
-      <header className="mb-6 text-center">
-        <h2 className="text-xl font-semibold">{title}</h2>
-        {author && <p className="mt-1 text-sm text-muted-foreground">{author}</p>}
+      <header className="mb-6 text-center sm:px-20">
+        <h2 className={`text-xl font-semibold ${pinyin ? "leading-[2.4]" : ""}`}>
+          <Chinese text={title} pinyin={pinyin} />
+        </h2>
+        {showHeaderEn && titleEn && <p className="text-sm text-muted-foreground">{titleEn}</p>}
+        {author && (
+          <p className={`mt-1 text-sm text-muted-foreground ${pinyin ? "leading-[2.4]" : ""}`}>
+            <Chinese text={author} pinyin={pinyin} />
+          </p>
+        )}
+        {showHeaderEn && authorEn && <p className="text-xs text-muted-foreground">{authorEn}</p>}
       </header>
 
       <div className={showEn ? "grid grid-cols-1 sm:grid-cols-2" : "text-center"}>
@@ -74,16 +87,23 @@ function Toggle({ label, icon, on, set }: { label: string; icon: string; on: boo
 }
 
 function PoemRow({ line, en, pinyin, pad }: { line: string; en?: string; pinyin: boolean; pad: string }) {
+  const withEn = en !== undefined
+  // the chinese is centered with or without english, so toggling english doesn't move it.
+  // stacked (mobile), the stanza gap goes under the english line, not between a line and its translation.
   const zh = (
-    <p className={`py-1 text-lg ${pinyin ? "leading-[2.6]" : "leading-8"} ${pad} ${en !== undefined ? "sm:border-r sm:border-dashed sm:border-muted-foreground/50 sm:pr-6" : ""}`}>
+    <p
+      className={`py-1 text-center text-lg ${pinyin ? "leading-[2.6]" : "leading-8"} ${
+        withEn ? `sm:border-r sm:border-dashed sm:border-muted-foreground/50 sm:pr-6 ${pad ? "sm:pb-6" : ""}` : pad
+      }`}
+    >
       <Chinese text={line} pinyin={pinyin} />
     </p>
   )
-  if (en === undefined) return zh
+  if (!withEn) return zh
   return (
     <>
       {zh}
-      <p className={`flex items-center pb-3 text-sm leading-6 text-muted-foreground sm:py-1 sm:pl-6 ${pad}`}>{en}</p>
+      <p className={`flex items-center justify-center pb-3 text-center text-sm leading-6 text-muted-foreground sm:justify-start sm:py-1 sm:pl-6 sm:text-left ${pad}`}>{en}</p>
     </>
   )
 }
