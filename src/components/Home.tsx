@@ -12,7 +12,7 @@ export function Home() {
     <>
       <header>
         <h1 className="text-4xl font-semibold tracking-tight">
-          Kevin Lee <span className="text-muted-foreground">李璐</span>
+          Kevin Lee <span className="text-muted-foreground">李路</span>
         </h1>
       </header>
 
